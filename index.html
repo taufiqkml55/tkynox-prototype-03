@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TKYNOX prototype 03</title>
+    <meta name="description" content="TKYNOX - Futuristic Graphic Design & Digital Art Services" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700&display=swap');
+      
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 80px;
+        background-color: #050505;
+      }
+
+      body {
+        font-family: 'Bricolage Grotesque', sans-serif;
+        background-color: #050505; 
+        color: #E0E0E0;
+        overflow-x: hidden;
+      }
+      
+      /* Utility for mono fonts */
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Scrollbar Customization for Chrome/Safari/Webkit */
+      ::-webkit-scrollbar {
+        width: 8px;
+        background: #0D0D0D;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1A1A1A;
+        border: 1px solid #333;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #00FF41;
+      }
+
+      /* Text Selection */
+      ::selection {
+        background: #00FF41;
+        color: #000000;
+      }
+
+      @keyframes fade-in-up {
+        0% { opacity: 0; transform: translateY(20px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes glitch {
+        0% { transform: translate(0) }
+        20% { transform: translate(-2px, 2px) }
+        40% { transform: translate(-2px, -2px) }
+        60% { transform: translate(2px, 2px) }
+        80% { transform: translate(2px, -2px) }
+        100% { transform: translate(0) }
+      }
+
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+
+      .animate-fade-in-up {
+        animation: fade-in-up 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+      }
+      
+      .animate-glitch:hover {
+        animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+      }
+
+      .animate-blink {
+        animation: blink 1s step-end infinite;
+      }
+
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "vite": "https://aistudiocdn.com/vite@^7.2.4",
+    "@vitejs/plugin-react": "https://aistudiocdn.com/@vitejs/plugin-react@^5.1.1"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

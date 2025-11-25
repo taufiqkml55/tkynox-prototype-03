@@ -1,0 +1,99 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=JetBrains+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tk-neon: #00FF41;
+  --tk-bg: #050505;
+  --tk-panel: #0A0A0A;
+  --tk-text-muted: #A0A0A0;
+  --tk-border: #333333;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+  background-color: var(--tk-bg);
+}
+
+body {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  background-color: var(--tk-bg); 
+  color: #E0E0E0;
+  overflow-x: hidden;
+}
+
+/* Utility for mono fonts */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar Customization for Chrome/Safari/Webkit */
+::-webkit-scrollbar {
+  width: 8px;
+  background: #0D0D0D;
+}
+::-webkit-scrollbar-thumb {
+  background: #1A1A1A;
+  border: 1px solid var(--tk-border);
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--tk-neon);
+}
+
+/* Text Selection */
+::selection {
+  background: var(--tk-neon);
+  color: #000000;
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0) }
+  20% { transform: translate(-2px, 2px) }
+  40% { transform: translate(-2px, -2px) }
+  60% { transform: translate(2px, 2px) }
+  80% { transform: translate(2px, -2px) }
+  100% { transform: translate(0) }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+}
+
+.animate-glitch:hover {
+  animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.clip-path-slant {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+}
+
+/* Interactive Elements */
+.btn-press {
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+.btn-press:active {
+  transform: scale(0.96);
+}
+.btn-press:hover {
+  transform: translateY(-1px);
+}
