@@ -1,4 +1,3 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -39,7 +38,8 @@ function App() {
 
   // --- 2. Translation Logic ---
   const [language, setLanguage] = useState<Language>('en');
-  const currentTranslations = useMemo(() => TRANSLATIONS[language] || TRANSLATIONS.en, [language]);
+  // Fix: Cast language to keyof typeof TRANSLATIONS to satisfy TS7053
+  const currentTranslations = useMemo(() => TRANSLATIONS[language as keyof typeof TRANSLATIONS] || TRANSLATIONS.en, [language]);
 
   const handleLanguageChange = (lang: Language) => {
       setLanguage(lang);

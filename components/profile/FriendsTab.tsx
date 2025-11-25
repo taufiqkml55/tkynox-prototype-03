@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { User, Friend } from '../../types';
 import { audioSystem } from '../../services/audioSystem';
@@ -46,7 +45,7 @@ export const FriendsTab: React.FC<FriendsTabProps> = ({
             }
         }, (error) => {
             console.error("Global Network Error:", error);
-            if (error.code === 'PERMISSION_DENIED') {
+            if ((error as any).code === 'PERMISSION_DENIED') {
                 setRtdbError("ACCESS DENIED: CHECK FIREBASE REALTIME DB RULES");
             } else {
                 setRtdbError("NETWORK SIGNAL LOST");

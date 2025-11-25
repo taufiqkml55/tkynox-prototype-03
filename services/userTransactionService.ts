@@ -1,4 +1,3 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -140,16 +139,20 @@ export const transferCreditsTx = async (sender: User, recipientId: string, amoun
         const receiverDoc = await transaction.get(receiverRef);
 
         if (!receiverDoc.exists()) throw new Error("Recipient not found");
+        if (!senderDoc.exists()) throw new Error("Sender not found"); 
 
-        const newSenderBalance = senderDoc.data().balance - amount;
+        const sData = senderDoc.data() as User;
+        const rData = receiverDoc.data() as User;
+
+        const newSenderBalance = sData.balance - amount;
         if (newSenderBalance < 0) throw new Error("Insufficient funds");
 
-        const newReceiverBalance = receiverDoc.data().balance + amount;
+        const newReceiverBalance = rData.balance + amount;
 
         const txOut: Transaction = {
             id: `${txId}-OUT`,
             type: 'transfer_out',
-            description: `TRANSFER TO ${receiverDoc.data().name.toUpperCase()}`,
+            description: `TRANSFER TO ${rData.name?.toUpperCase() || 'OPERATIVE'}`,
             amount: -amount,
             date: new Date().toISOString()
         };
@@ -164,12 +167,12 @@ export const transferCreditsTx = async (sender: User, recipientId: string, amoun
 
         transaction.update(senderRef, { 
             balance: newSenderBalance,
-            transactions: [txOut, ...(senderDoc.data().transactions || [])]
+            transactions: [txOut, ...(sData.transactions || [])]
         });
 
         transaction.update(receiverRef, { 
             balance: newReceiverBalance,
-            transactions: [txIn, ...(receiverDoc.data().transactions || [])]
+            transactions: [txIn, ...(rData.transactions || [])]
         });
     });
 };
@@ -182,8 +185,11 @@ export const transferItemTx = async (sender: User, recipientId: string, productI
         const senderDoc = await transaction.get(senderRef);
 
         if (!receiverDoc.exists()) throw new Error("Recipient not found");
+        if (!senderDoc.exists()) throw new Error("Sender not found");
 
-        const currentSold = senderDoc.data().soldItems || {};
+        const sData = senderDoc.data() as User;
+        
+        const currentSold = sData.soldItems || {};
         const newSold = (currentSold[productId] || 0) + 1;
 
         const receivedItem = {
@@ -207,42 +213,47 @@ export const executePvPTradeTx = async (buyer: User, sellerId: string, productId
         const sellerDoc = await transaction.get(sellerRef);
 
         if (!sellerDoc.exists()) throw new Error("SELLER_NOT_FOUND");
-        if (buyerDoc.data().balance < price) throw new Error("INSUFFICIENT_FUNDS");
+        if (!buyerDoc.exists()) throw new Error("BUYER_NOT_FOUND");
+        
+        const bData = buyerDoc.data() as User;
+        const sData = sellerDoc.data() as User;
+
+        if (bData.balance < price) throw new Error("INSUFFICIENT_FUNDS");
 
         const txBuy: Transaction = {
             id: `${txId}-BUY`,
             type: 'pvp_buy',
-            description: `PVP MARKET BUY: ${productId} FROM ${sellerDoc.data().name}`,
+            description: `PVP MARKET BUY: ${productId} FROM ${sData.name}`,
             amount: -price,
             date: new Date().toISOString()
         };
 
         const receivedItem = {
             id: productId,
-            fromName: `PVP: ${sellerDoc.data().name}`,
+            fromName: `PVP: ${sData.name}`,
             date: new Date().toISOString()
         };
 
         const txSell: Transaction = {
             id: `${txId}-SELL`,
             type: 'pvp_sell',
-            description: `PVP MARKET SELL: ${productId} TO ${buyerDoc.data().name}`,
+            description: `PVP MARKET SELL: ${productId} TO ${bData.name}`,
             amount: price,
             date: new Date().toISOString()
         };
 
-        const currentSellerSold = sellerDoc.data().soldItems || {};
+        const currentSellerSold = sData.soldItems || {};
         const newSellerSold = (currentSellerSold[productId] || 0) + 1;
 
         transaction.update(buyerRef, {
-            balance: buyerDoc.data().balance - price,
-            transactions: [txBuy, ...(buyerDoc.data().transactions || [])],
+            balance: bData.balance - price,
+            transactions: [txBuy, ...(bData.transactions || [])],
             receivedItems: arrayUnion(receivedItem)
         });
 
         transaction.update(sellerRef, {
-            balance: sellerDoc.data().balance + price,
-            transactions: [txSell, ...(sellerDoc.data().transactions || [])],
+            balance: sData.balance + price,
+            transactions: [txSell, ...(sData.transactions || [])],
             [`soldItems.${productId}`]: newSellerSold
         });
     });

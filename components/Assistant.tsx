@@ -1,4 +1,3 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -116,7 +115,8 @@ const Assistant: React.FC<AssistantProps> = ({
       const candidate = response.candidates?.[0];
       if (!candidate || !candidate.content) throw new Error("No response");
 
-      const modelParts = candidate.content.parts;
+      // Fix: Default to empty array if undefined to satisfy TS18048
+      const modelParts = candidate.content.parts || [];
       
       const updatedHistory = [...currentHistory, candidate.content];
       setAiHistory(updatedHistory);
@@ -131,21 +131,24 @@ const Assistant: React.FC<AssistantProps> = ({
           
           if (part.functionCall) {
              functionCallFound = true;
+             const funcName = part.functionCall.name;
+             if (!funcName) continue; // Guard clause for TS check
+
              // UI Feedback for action
              if (!part.text) {
                  setMessages(prev => [...prev, { 
                      role: 'model', 
-                     text: `>> EXECUTING: ${part.functionCall?.name.toUpperCase()}...`, 
+                     text: `>> EXECUTING: ${funcName.toUpperCase()}...`, 
                      timestamp: Date.now() 
                  }]);
              }
 
              // Execute
-             const result = await executeFunction(part.functionCall.name, part.functionCall.args);
+             const result = await executeFunction(funcName, part.functionCall.args);
              
              const functionResponsePart: Part = {
                  functionResponse: {
-                     name: part.functionCall.name,
+                     name: funcName,
                      response: { result: result.text } // Return text result to AI
                  }
              };
